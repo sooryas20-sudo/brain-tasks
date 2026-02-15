@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+  pre_build:
+    commands:
+      - aws eks update-kubeconfig --name brain-cluster --region ap-south-1
+  build:
+    commands:
+      - kubectl apply -f deployment.yaml
+      - kubectl apply -f service.yaml
+      - kubectl rollout restart deployment/brain-app
